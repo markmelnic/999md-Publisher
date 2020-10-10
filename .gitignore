@@ -131,3 +131,5 @@ dmypy.json
 *.cfg
 *.txt
 *.exe
+*.jpg
+*.png
