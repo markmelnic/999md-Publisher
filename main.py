@@ -1,24 +1,27 @@
 
-import os, time, getpass
+import os, time
 import configparser as cfg
+from argparse import ArgumentParser, RawTextHelpFormatter
 
 from sel_module import *
 
 DAY = 86400 # day to seconds
 
 if __name__ == "__main__":
-    parser = cfg.ConfigParser()
-    print("*** Provide your login details.")
-    username = input("Username: ")
-    password = getpass.getpass("Password: ")
+    cfgparser = cfg.ConfigParser()
+    argparser = ArgumentParser(formatter_class=RawTextHelpFormatter)
+    argparser.add_argument("username", metavar="username", type=str, help="Login username.")
+    argparser.add_argument("password", metavar="password", type=str, help="Login password.")
+    args = argparser.parse_args()
+
     dv = boot()
-    login(dv, username, password)
+    login(dv, args.username, args.password)
     while True:
         try:
             for listing in os.listdir():
                 if "listing_" in listing:
-                    parser.read(listing + "/data.cfg")
-                    publish(dv, parser, listing)
+                    cfgparser.read(listing + "/data.cfg")
+                    publish(dv, cfgparser, listing)
             time.sleep(DAY)
         except KeyboardInterrupt:
             break
