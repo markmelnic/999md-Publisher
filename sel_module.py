@@ -1,5 +1,6 @@
 
 import os, time
+from datetime import datetime
 from selenium import webdriver
 import selenium.webdriver.chrome.options
 from selenium.webdriver.common.by import By
@@ -19,10 +20,15 @@ def boot():
     prefs = {"profile.default_content_setting_values.notifications": 2}
     chrome_options.add_experimental_option("prefs", prefs)
     chrome_options.add_argument("--headless")
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
 
     #  driver itself
+    dv_path = os.path.abspath("chromedriver.exe")
+    if not "\\" in dv_path:
+        dv_path = os.path.abspath("chromedriver")
     dv = webdriver.Chrome(
-        chrome_options=chrome_options, executable_path=r"./chromedriver.exe"
+        chrome_options=chrome_options, executable_path=dv_path
     )
     return dv
 
@@ -47,6 +53,7 @@ def login(dv, username, password):
 
     # sign in
     dv.find_element_by_class_name("login__form__footer__submit").click()
+    print("*** Login successful.")
 
 def publish(dv, data, path):
     dv.get(ADD_LINK)
@@ -83,3 +90,7 @@ def publish(dv, data, path):
     dv.find_element_by_id("agree").click()
     dv.find_element_by_xpath("//*[@id=\"js-add-form\"]/section[6]/div/div/button").click()
     time.sleep(5)
+
+    now = datetime.now()
+    dt = now.strftime("%d/%m/%Y %H:%M:%S")
+    print("*** Ad published at", dt)
