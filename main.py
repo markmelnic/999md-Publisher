@@ -1,8 +1,10 @@
 
-import os, getpass
+import os, time, getpass
 import configparser as cfg
 
 from sel_module import *
+
+DAY = 86400 # day to seconds
 
 if __name__ == "__main__":
     parser = cfg.ConfigParser()
@@ -11,8 +13,13 @@ if __name__ == "__main__":
     password = getpass.getpass("Password: ")
     dv = boot()
     login(dv, username, password)
-    for listing in os.listdir():
-        if not "." in listing and not "__" in listing:
-            parser.read(listing + "/data.cfg")
-            publish(dv, parser, listing)
+    while True:
+        try:
+            for listing in os.listdir():
+                if "listing_" in listing:
+                    parser.read(listing + "/data.cfg")
+                    publish(dv, parser, listing)
+            time.sleep(DAY)
+        except KeyboardInterrupt:
+            break
     killb(dv)
