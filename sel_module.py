@@ -85,7 +85,10 @@ def publish(dv, data, path):
 
     for entry in os.scandir(path):
         if ".jpg" in entry.name:
-            dv.find_element_by_xpath("/html/body/div[3]/div/section/div/div[1]/section[2]/div/div[1]/form/section[4]/div/section[1]/div[2]/input").send_keys(os.path.abspath(path + "/" + entry.name))
+            img_path = os.path.abspath(path + "/" + entry.name)
+            #print(img_path)
+            dv.find_element_by_xpath("/html/body/div[3]/div/section/div/div[1]/section[2]/div/div[1]/form/section[4]/div/section[1]/div[2]/input").send_keys(img_path)
+            time.sleep(2)
 
     dv.find_element_by_id("agree").click()
     dv.find_element_by_xpath("//*[@id=\"js-add-form\"]/section[6]/div/div/button").click()
