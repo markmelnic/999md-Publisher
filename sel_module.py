@@ -77,21 +77,29 @@ def publish(dv, data, path):
     for char in data.get('d', 'price'):
         price_field.send_keys(char)
 
-    type_field = dv.find_element_by_name("1021").find_elements_by_tag_name("option")
-    type_field[int(data.get('d', 'type')[1:-1]) + 1].click()
+    try:
+        type_field = dv.find_element_by_name("1021").find_elements_by_tag_name("option")
+        type_field[int(data.get('d', 'type')[1:-1]) + 1].click()
 
-    state_field = dv.find_element_by_name("593").find_elements_by_tag_name("option")
-    state_field[int(data.get('d', 'state')[1:-1]) + 1].click()
+        state_field = dv.find_element_by_name("593").find_elements_by_tag_name("option")
+        state_field[int(data.get('d', 'state')[1:-1]) + 1].click()
+    except selenium.common.exceptions.NoSuchElementException or AttributeError:
+        pass
 
     for entry in os.scandir(path):
         if ".jpg" in entry.name:
             img_path = os.path.abspath(path + "/" + entry.name)
             #print(img_path)
-            dv.find_element_by_xpath("/html/body/div[3]/div/section/div/div[1]/section[2]/div/div[1]/form/section[4]/div/section[1]/div[2]/input").send_keys(img_path)
+            dv.find_element_by_id("fileupload-file-input").send_keys(img_path)
             time.sleep(2)
 
     dv.find_element_by_id("agree").click()
-    dv.find_element_by_xpath("//*[@id=\"js-add-form\"]/section[6]/div/div/button").click()
+    for i in range(20):
+        try:
+            dv.find_element_by_xpath("//*[@id=\"js-add-form\"]/section["+str(i)+"]/div/div/button").click()
+            break
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
     time.sleep(5)
 
     now = datetime.now()
